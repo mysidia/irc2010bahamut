@@ -19,54 +19,54 @@
  *
  */
 
-/* $Id: msg.h,v 1.1 2000/07/15 21:59:33 mysidia Exp $ */
+/* $Id: msg.h,v 1.2 2001/11/08 22:03:32 mysidia Exp $ */
 
 #ifndef	__msg_include__
 #define __msg_include__
 
-#define MSG_PRIVATE  "PRIVMSG"		/* PRIV */
-#define MSG_WHO      "WHO"	      	/* WHO  -> WHOC */
-#define MSG_WHOIS    "WHOIS"	   	/* WHOI */
-#define MSG_WHOWAS   "WHOWAS"	   	/* WHOW */
-#define MSG_USER     "USER"	   	/* USER */
-#define MSG_NICK     "NICK"	   	/* NICK */
-#define MSG_SERVER   "SERVER"	   	/* SERV */
-#define MSG_LIST     "LIST"	   	/* LIST */
-#define MSG_TOPIC    "TOPIC"	   	/* TOPI */
-#define MSG_INVITE   "INVITE"	   	/* INVI */
-#define MSG_VERSION  "VERSION"		/* VERS */
-#define MSG_QUIT     "QUIT"	   	/* QUIT */
-#define MSG_SQUIT    "SQUIT"	   	/* SQUI */
-#define MSG_KILL     "KILL"	   	/* KILL */
-#define MSG_INFO     "INFO"	   	/* INFO */
-#define MSG_LINKS    "LINKS"	   	/* LINK */
-#define MSG_STATS    "STATS"	   	/* STAT */
-#define MSG_USERS    "USERS"	   	/* USER -> USRS */
-#define MSG_HELP     "HELP"	   	/* HELP */
-#define MSG_ERROR    "ERROR"	   	/* ERRO */
-#define MSG_AWAY     "AWAY"	   	/* AWAY */
-#define MSG_CONNECT  "CONNECT"		/* CONN */
-#define MSG_PING     "PING"	   	/* PING */
-#define MSG_PONG     "PONG"	   	/* PONG */
-#define MSG_OPER     "OPER"	   	/* OPER */
-#define MSG_PASS     "PASS"	   	/* PASS */
-#define MSG_WALLOPS  "WALLOPS"		/* WALL */
-#define MSG_TIME     "TIME"	   	/* TIME */
-#define MSG_NAMES    "NAMES"	   	/* NAME */
-#define MSG_ADMIN    "ADMIN"	   	/* ADMI */
-#define MSG_TRACE    "TRACE"	   	/* TRAC */
-#define MSG_NOTICE   "NOTICE"	   	/* NOTI */
-#define MSG_JOIN     "JOIN"	   	/* JOIN */
-#define MSG_PART     "PART"	   	/* PART */
-#define MSG_LUSERS   "LUSERS"	   	/* LUSE */
-#define MSG_MOTD     "MOTD"	   	/* MOTD */
-#define MSG_MODE     "MODE"	   	/* MODE */
-#define MSG_KICK     "KICK"	   	/* KICK */
-#define MSG_USERHOST "USERHOST"		/* USER -> USRH */
-#define MSG_ISON     "ISON"	   	/* ISON */
-#define MSG_REHASH   "REHASH"	   	/* REHA */
-#define MSG_RESTART  "RESTART"		/* REST */
-#define MSG_CLOSE    "CLOSE"	   	/* CLOS */
+#define MSG_PRIVATE  "PRIVMSG"		/* Messages, PRIVMSG <targ> :<msg> */
+#define MSG_WHO      "WHO"	      	/* WHO command, WHO <mask> [o]	   */
+#define MSG_WHOIS    "WHOIS"	   	/* WHOIS - WHOIS <nickname>	   */
+#define MSG_WHOWAS   "WHOWAS"	   	/* WHOWAS - WHOWAS <nickname>	   */
+#define MSG_USER     "USER"	   	/* USER - USER <user> <host> <server> :<info> */
+#define MSG_NICK     "NICK"	   	/* NICK				   */
+#define MSG_SERVER   "SERVER"	   	/* SERV	- SERVER <name>		   */
+#define MSG_LIST     "LIST"	   	/* LIST	- LIST [<chan>]		   */
+#define MSG_TOPIC    "TOPIC"	   	/* TOPIC - TOPIC <chan> [:<topic>] */
+#define MSG_INVITE   "INVITE"	   	/* INVI - INVITE <chan> <nick>	   */
+#define MSG_VERSION  "VERSION"		/* VERS - VERSION [<target>]       */
+#define MSG_QUIT     "QUIT"	   	/* QUIT - QUIT [<reason>]          */
+#define MSG_SQUIT    "SQUIT"	   	/* SQUI - SQUIT <server> [<reason>]*/
+#define MSG_KILL     "KILL"	   	/* KILL - KILL <nick> <reason>	   */
+#define MSG_INFO     "INFO"	   	/* INFO - INFO [<target>]	   */
+#define MSG_LINKS    "LINKS"	   	/* LINK - LINKS [<target>]	   */
+#define MSG_STATS    "STATS"	   	/* STAT - STATS [<target>]	   */
+#define MSG_USERS    "USERS"	   	/* USERS - *DEPRECATE*		   */
+#define MSG_HELP     "HELP"	   	/* HELP - HELP [<topic>]	   */
+#define MSG_ERROR    "ERROR"	   	/* ERROR - ERROR [<message>]	   */
+#define MSG_AWAY     "AWAY"	   	/* AWAY - AWAY [<reason>]	   */
+#define MSG_CONNECT  "CONNECT"		/* CONN - CONNECT <server> <port> [<hub>] */
+#define MSG_PING     "PING"	   	/* PING - PING [:<server>]	   */
+#define MSG_PONG     "PONG"	   	/* PONG - PONG [:<server>]	   */
+#define MSG_OPER     "OPER"	   	/* OPER - OPER <nick> <pass>	   */
+#define MSG_PASS     "PASS"	   	/* PASS - PASS <password>	   */
+#define MSG_WALLOPS  "WALLOPS"		/* WALL - WALLOPS <message>	   */
+#define MSG_TIME     "TIME"	   	/* TIME - TIME <server>		   */
+#define MSG_NAMES    "NAMES"	   	/* NAME - NAMES :[<channel>]	   */
+#define MSG_ADMIN    "ADMIN"	   	/* ADMI - ADMIN [<target>]	   */
+#define MSG_TRACE    "TRACE"	   	/* TRAC - TRACE [<target>]	   */
+#define MSG_NOTICE   "NOTICE"	   	/* NOTI - NOTICE [<nick>]	   */
+#define MSG_JOIN     "JOIN"	   	/* JOIN - JOIN [<channel>]	   */
+#define MSG_PART     "PART"	   	/* PART - PART [<channel>]	   */
+#define MSG_LUSERS   "LUSERS"	   	/* LUSE - LUSERS [<target>] [<target>] */
+#define MSG_MOTD     "MOTD"	   	/* MOTD - MOTD [<target>]	   */
+#define MSG_MODE     "MODE"	   	/* MODE - MODE <channel> [<mode>] [<args>] */
+#define MSG_KICK     "KICK"	   	/* KICK - KICK <channel> <nick> [:<reason>] */
+#define MSG_USERHOST "USERHOST"		/* USER - USERHOST <nick>	   */
+#define MSG_ISON     "ISON"	   	/* ISON - ISON {<nick>, <nick>, ...}*/
+#define MSG_REHASH   "REHASH"	   	/* REHA - REHASH <option>	    */
+#define MSG_RESTART  "RESTART"		/* REST - RESTART [:<reason>]	    */
+#define MSG_CLOSE    "CLOSE"	   	/* CLOS - CLOSE */
 #define MSG_SVINFO   "SVINFO"	   	/* SVINFO */
 #define MSG_SJOIN    "SJOIN"	   	/* SJOIN */
 #define MSG_DIE	     "DIE" 		/* DIE */
@@ -106,6 +106,8 @@
 #define MSG_UNSQLINE "UNSQLINE" 	/* UNSQLINE */
 #define MSG_BURST    "BURST"     	/* BURST */
 #define MSG_DCCALLOW "DCCALLOW"		/* dccallow */
+#define MSG_SSL	     "SSL"		/* Secure Socket Layer Negot. */
+
 #define MAXPARA      15
 
 extern int  m_kline(aClient *, aClient *, int, char **);
@@ -190,6 +192,7 @@ extern int  m_sqline(aClient *, aClient *, int, char **);
 extern int  m_unsqline(aClient *, aClient *, int, char **);
 extern int  m_burst(aClient *, aClient *, int, char **);
 extern int  m_dccallow(aClient *, aClient *, int, char **);
+extern int  m_ssl(aClient *, aClient *, int, char **);
 
 #ifdef MSGTAB
 struct Message msgtab[] = {
@@ -274,6 +277,7 @@ struct Message msgtab[] = {
    {MSG_UNSQLINE, m_unsqline, 0, MAXPARA, 1, 0, 0, 0L },
    {MSG_CAPAB, m_capab, 0, MAXPARA, 1, 1, 0, 0L},
    {MSG_BURST, m_burst, 0, MAXPARA, 1, 0, 0, 0L},
+   {MSG_SSL, m_ssl, 0, MAXPARA, 1, 1, 0, 0L},
    {(char *) 0, (int (*)()) 0, 0, 0, 0, 0, 0, 0L}
 };
 

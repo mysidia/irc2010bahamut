@@ -20,10 +20,10 @@
  */
 
 #ifndef __LINT__
-static char rcsid[] = "$Id: ircd-ssl.c,v 1.3 2001/02/11 06:36:09 mysidia Exp $";
+static char rcsid[] = "$Id: ircd-ssl.c,v 1.4 2001/11/08 22:03:32 mysidia Exp $";
 #endif
 
-#include <ssl.h>
+#include <openssl/ssl.h>
 
 SSL_CTX *my_ctx = NULL;
 

@@ -18,7 +18,7 @@
  *
  */
 
-/* $Id: config.h,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
+/* $Id: config.h,v 1.3 2001/11/08 22:03:32 mysidia Exp $ */
 
 #ifndef	__config_include__
 #define	__config_include__
@@ -905,7 +905,7 @@
  * make your client server very sluggish. You usually shouldn't need
  * this. -Dianora
  */
-#undef  DEBUGMODE		/* define DEBUGMODE to enable */
+#define  DEBUGMODE		/* define DEBUGMODE to enable */
 
 /*
  * If your host supports varargs and has vsprintf(), vprintf() and

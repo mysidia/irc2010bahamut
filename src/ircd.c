@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: ircd.c,v 1.4 2000/08/02 19:25:48 mysidia Exp $ */
+/* $Id: ircd.c,v 1.5 2001/11/08 22:03:32 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -1316,7 +1316,7 @@ aClient    *cptr;
 
       (void) printf("isatty = %d ttyname = %#x\n",
 		    isatty(2), (u_int) ttyname(2));
-      if (!(bootopt & BOOT_TTY))) 	/* leave debugging output on fd */ 
+      if (!(bootopt & BOOT_TTY)) 	/*) leave debugging output on fd */ 
       {
 	 (void) truncate(LOGFILE, 0);
 	 if ((fd = open(LOGFILE, O_WRONLY | O_CREAT, 0600)) < 0)

@@ -25,7 +25,7 @@
  * 
  */
 
-/* $Id: h.h,v 1.1 2000/07/15 21:59:32 mysidia Exp $ */
+/* $Id: h.h,v 1.2 2001/11/08 22:03:32 mysidia Exp $ */
 
 #include "send.h"
 #include "ircsprintf.h"
@@ -339,5 +339,8 @@ extern int     	  hash_check_watch(aClient *, int);
 extern int     	  hash_del_watch_list(aClient  *);
 extern aWatch 	 *hash_get_watch(char *);
 #define MAXWATCH       128
+
+extern int	ssl_send(aClient *cptr, char *msg, int len, int);
+
 
 #include "find.h"

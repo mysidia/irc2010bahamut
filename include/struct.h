@@ -20,7 +20,7 @@
  *
  */
 
-/* $Id: struct.h,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
+/* $Id: struct.h,v 1.3 2001/11/08 22:03:32 mysidia Exp $ */
 
 #ifndef	__struct_include__
 #define __struct_include__
@@ -48,7 +48,7 @@
 #endif
 #endif
 
-#include <ssl.h>
+#include <openssl/ssl.h>
 
 #define REPORT_DO_DNS_		":%s NOTICE AUTH :*** Looking up your hostname...\n"
 #define REPORT_FIN_DNS_		":%s NOTICE AUTH :*** Found your hostname\n"
