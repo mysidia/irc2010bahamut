@@ -20,7 +20,7 @@
  */
 
 #ifndef __LINT__
-static char rcsid[] = "$Id: ircd-ssl.c,v 1.2 2000/07/22 21:52:03 mysidia Exp $";
+static char rcsid[] = "$Id: ircd-ssl.c,v 1.3 2001/02/11 06:36:09 mysidia Exp $";
 #endif
 
 #include <ssl.h>
@@ -77,3 +77,4 @@ void get_server_key()
     }
 }
 #endif
+
