@@ -1,0 +1,15 @@
+#ifndef _IRCD_DOG3_FDLIST
+#define _IRCD_DOG3_FDLIST
+
+/* $Id: fdlist.h,v 1.1 2000/07/15 21:59:31 mysidia Exp $ */
+
+typedef struct fdstruct {
+   int         entry[MAXCONNECTIONS + 2];
+   int         last_entry;
+} fdlist;
+
+void        addto_fdlist(int a, fdlist * b);
+void        delfrom_fdlist(int a, fdlist * b);
+void        init_fdlist(fdlist * b);
+
+#endif /* _IRCD_DOG3_FDLIST */
