@@ -21,7 +21,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_user.c,v 1.3 2000/08/02 19:25:48 mysidia Exp $ */
+/* $Id: s_user.c,v 1.4 2000/08/17 22:27:39 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -1806,7 +1806,7 @@ int msg_has_colors(char *msg)
 
    while(*c)
    {
-      if(*c == '\003' || *c == '\033')
+      if(*c == '\003' && isdigit(c[1]) && isdigit(c[2]))
          break;
       else
          c++;

@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_bsd.c,v 1.4 2000/08/02 19:25:48 mysidia Exp $ */
+/* $Id: s_bsd.c,v 1.5 2000/08/17 22:27:39 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -2458,8 +2458,10 @@ void do_ssl(aClient *cptr)
 {
    extern SSL_CTX *my_ctx;
 
-   if (cptr->ssl_link)
-       return;
+   if (cptr->ssl_link) {
+       SSL_free(cptr->ssl_link);
+       cptr->ssl_link = NULL;
+   }
 
    if (cptr) {
        cptr->ssl_link = SSL_new(my_ctx);
@@ -2512,7 +2514,7 @@ int m_ssl(aClient *cptr, aClient *sptr, int parc, char *parv[])
 	    send_to_one(sptr, ":%s SSL %s :B 1", me.name);*/
 
         flush_connections(cptr->fd);
-	do_ssl(cptr);
+	do_ssl(sptr);
 #endif
 	return 0;
 }
