@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: ircd.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
+/* $Id: ircd.c,v 1.3 2000/07/22 21:52:03 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -219,10 +219,15 @@ void restart(char *mesg)
    server_reboot();
 }
 
-VOIDSIG s_restart() 
+VOIDSIG s_restart(int signum) 
 {
 	static int  restarting = 0;
 	
+   if (signum == SIGINT && (bootopt & (BOOT_OPER|BOOT_STDERR|BOOT_INETD))) {
+       s_die();
+       return;
+   }
+
 #ifdef	USE_SYSLOG
    (void) syslog(LOG_WARNING, "Server Restarting on SIGINT");
 #endif
@@ -257,10 +262,10 @@ void server_reboot()
 
    (void) close(1);
 
-   if ((bootopt & BOOT_CONSOLE) || isatty(0))
+   if ((bootopt & BOOT_CONSOLE))
       (void) close(0);
 
-   if (!(bootopt & (BOOT_INETD | BOOT_OPER)))
+   if (!(bootopt & (BOOT_INETD)))
       (void) execv(MYNAME, myargv);
 
 #ifdef USE_SYSLOG
@@ -1311,7 +1316,7 @@ aClient    *cptr;
 
       (void) printf("isatty = %d ttyname = %#x\n",
 		    isatty(2), (u_int) ttyname(2));
-      if (!(bootopt & BOOT_TTY)) 	/* leave debugging output on fd */ 
+      if (!(bootopt & BOOT_TTY))) 	/* leave debugging output on fd */ 
       {
 	 (void) truncate(LOGFILE, 0);
 	 if ((fd = open(LOGFILE, O_WRONLY | O_CREAT, 0600)) < 0)
@@ -1362,6 +1367,8 @@ struct sigaction act;
    act.sa_handler = s_restart;
    (void) sigaddset(&act.sa_mask, SIGINT);
    (void) sigaction(SIGINT, &act, NULL);
+   (void) sigaddset(&act.sa_mask, SIGUSR2);
+   (void) sigaction(SIGUSR2, &act, NULL);
    act.sa_handler = s_die;
    (void) sigaddset(&act.sa_mask, SIGTERM);
    (void) sigaction(SIGTERM, &act, NULL);
@@ -1382,6 +1389,7 @@ struct sigaction act;
    (void) signal(SIGHUP, s_rehash);
    (void) signal(SIGTERM, s_die);
    (void) signal(SIGINT, s_restart);
+   (void) signal(SIGUSR2, s_restart);
 #endif 
 
 #ifdef RESTARTING_SYSTEMCALLS

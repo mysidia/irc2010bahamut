@@ -20,7 +20,7 @@
  */
 
 #ifndef __LINT__
-static char rcsid[] = "$Id: ircd-ssl.c,v 1.1 2000/07/16 08:16:59 mysidia Exp $";
+static char rcsid[] = "$Id: ircd-ssl.c,v 1.2 2000/07/22 21:52:03 mysidia Exp $";
 #endif
 
 #include <ssl.h>
@@ -31,17 +31,17 @@ void get_server_key();
 
 void initialize_ssl()
 {
-   SSL_METHOD *ssl2method;
+   SSL_METHOD *ssl3method;
 
    SSL_library_init();
    SSL_load_error_strings();
    SSLeay_add_all_algorithms();
-   ssl2method = SSLv2_server_method();
-   if (!ssl2method) {
+   ssl3method = SSLv3_server_method();
+   if (!ssl3method) {
        fprintf(stderr, "Error establishing SSL method.\n");
        exit(-1);
    }
-   if (!(my_ctx = SSL_CTX_new(ssl2method))) {
+   if (!(my_ctx = SSL_CTX_new(ssl3method))) {
        fprintf(stderr, "Error establishing SSL context.\n");
        exit(-1);
    }

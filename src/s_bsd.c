@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_bsd.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
+/* $Id: s_bsd.c,v 1.3 2000/07/22 21:52:03 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -1193,14 +1193,19 @@ aClient *add_connection(aClient * cptr, int fd)
    if (cptr != &me)
       aconf = cptr->confs->value.aconf;
 
-   if (cptr && &me != cptr) {
-       acptr->ssl_link = SSL_new(my_ctx);
+   if (cptr && !isatty(fd)) {
+/*       acptr->ssl_link = SSL_new(my_ctx);
        if (!acptr->ssl_link) {
            ;;
+       }
+       else {
+           SSL_set_fd(acptr->ssl_link, fd);
+           SSL_want(acptr->ssl_link);
        }
 
        if ( acptr->ssl_link && SSL_accept(acptr->ssl_link) >= 0 )
             SSL_do_handshake(acptr->ssl_link);
+*/
    }
 
    /* 
@@ -1210,11 +1215,13 @@ aClient *add_connection(aClient * cptr, int fd)
     */
 
 #ifndef _WIN32
-   if (isatty(cptr->fd) || cptr == &me)
+   if (isatty(fd))
 #else
    if (0)
 #endif
+   {
        get_sockhost(acptr, cptr->sockhost);
+   }
    else
    {
       char *s, *t;
