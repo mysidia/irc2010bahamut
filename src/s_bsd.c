@@ -1,4 +1,3 @@
-
 /************************************************************************
  *   IRC - Internet Relay Chat, src/s_bsd.c
  *   Copyright (C) 1990 Jarkko Oikarinen and
@@ -19,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_bsd.c,v 1.1 2000/07/15 21:58:42 mysidia Exp $ */
+/* $Id: s_bsd.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -518,7 +517,21 @@ static int check_init(aClient * cptr, char *sockn)
 
    /* If descriptor is a tty, special checking... * IT can't EVER be a tty */
 
-   if (getpeername(cptr->fd, (struct sockaddr *) &sk, &len) == -1) {
+   /*
+    * Yes, it _CAN_ be a tty... rarely
+    * -Mysid 
+    */
+
+#ifndef _WIN32
+   if (isatty(cptr->fd) || cptr == &me)
+#else
+   if (0)
+#endif
+   {
+      strncpyzt(sockn, me.sockhost, HOSTLEN);
+      bzero((char *)&sk, sizeof(struct sockaddr_in));
+   }
+   else if (getpeername(cptr->fd, (struct sockaddr *) &sk, &len) == -1) {
 
 /*
  * This fills syslog, if on, and is just annoying. Nobody needs it. -lucas
@@ -812,7 +825,11 @@ static int completed_connection(aClient * cptr)
 
    /* pass on our capabilities to the server we /connect'd */
 
-   sendto_one(cptr, "CAPAB TS3 NOQUIT SSJOIN BURST UNCONNECT");
+   sendto_one(cptr, "CAPAB TS3 NOQUIT SSJOIN BURST UNCONNECT"
+#ifdef CAN_ENCRYPT
+                    " ENC1"
+#endif
+   );
 
    aconf = find_conf(cptr->confs, cptr->name, CONF_NOCONNECT_SERVER);
    if (!aconf) {
@@ -1167,28 +1184,38 @@ void set_non_blocking(int fd, aClient * cptr)
  */
 aClient *add_connection(aClient * cptr, int fd)
 {
+   extern SSL_CTX *my_ctx;
    Link lin;
    aClient *acptr;
    aConfItem *aconf = NULL;
 
    acptr = make_client(NULL, &me);
-
    if (cptr != &me)
       aconf = cptr->confs->value.aconf;
+
+   if (cptr && &me != cptr) {
+       acptr->ssl_link = SSL_new(my_ctx);
+       if (!acptr->ssl_link) {
+           ;;
+       }
+
+       if ( acptr->ssl_link && SSL_accept(acptr->ssl_link) >= 0 )
+            SSL_do_handshake(acptr->ssl_link);
+   }
+
    /* 
     * Removed preliminary access check. Full check is performed in
     * m_server and m_user instead. Also connection time out help to get
     * rid of unwanted connections.
     */
 
-   /* 
-    * Why is this isatty even here? everything is a socket no?
-    */
-   /* 
-    * if (isatty(fd)) / * If descriptor is a tty, special checking... *
-    * / get_sockhost(acptr, cptr->sockhost); else
-    *
-    */
+#ifndef _WIN32
+   if (isatty(cptr->fd) || cptr == &me)
+#else
+   if (0)
+#endif
+       get_sockhost(acptr, cptr->sockhost);
+   else
    {
       char *s, *t;
       struct sockaddr_in addr;

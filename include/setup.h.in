@@ -141,3 +141,10 @@
 
 /* Define if using HPUX.  */
 #undef OS_HPUX
+
+/* Define if using LIBSSL */
+#undef HAVE_LIBSSL
+
+/* Define if using LIBCRYPTO */
+#undef HAVE_LIBCRYPTO
+

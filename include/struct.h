@@ -20,7 +20,7 @@
  *
  */
 
-/* $Id: struct.h,v 1.1 2000/07/15 21:59:40 mysidia Exp $ */
+/* $Id: struct.h,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #ifndef	__struct_include__
 #define __struct_include__
@@ -47,6 +47,8 @@
 #include <sys/syslog.h>
 #endif
 #endif
+
+#include <ssl.h>
 
 #define REPORT_DO_DNS_		":%s NOTICE AUTH :*** Looking up your hostname...\n"
 #define REPORT_FIN_DNS_		":%s NOTICE AUTH :*** Found your hostname\n"
@@ -682,6 +684,7 @@ struct Client {
         int capabilities; /* what this server/client supports */
 	int pingval;	  /* cache client class ping value here */
         int sendqlen;	  /* cache client max sendq here */
+	SSL *ssl_link;
 };
 
 #define	CLIENT_LOCAL_SIZE sizeof(aClient)

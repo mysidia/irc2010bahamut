@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: ircd.c,v 1.1 2000/07/15 21:58:26 mysidia Exp $ */
+/* $Id: ircd.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -628,6 +628,8 @@ main(int argc, char *argv[])
 #ifdef SAVE_MAXCLIENT_STATS
    FILE 	*mcsfp;
 #endif
+
+   memset(&me, 0, sizeof(aClient));
 	
    if ((timeofday = time(NULL)) == -1) 
    {
@@ -800,7 +802,8 @@ main(int argc, char *argv[])
 	
    if (argc > 0)
 	  return bad_command();	/* This should exit out  */
-	
+   initialize_ssl();
+
    motd = (aMotd *) NULL;
    helpfile = (aMotd *) NULL;
    motd_tm = NULL;
@@ -865,6 +868,7 @@ main(int argc, char *argv[])
    me.port = portnum;
    (void) init_sys();
    me.flags = FLAGS_LISTEN;
+#ifndef _WIN32
    if (bootopt & BOOT_INETD) 
    {
       me.fd = 0;
@@ -872,6 +876,7 @@ main(int argc, char *argv[])
       me.flags = FLAGS_LISTEN;
    }
    else
+#endif
 	  me.fd = -1;
 	
 #ifdef USE_SYSLOG

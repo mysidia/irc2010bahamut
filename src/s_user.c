@@ -21,7 +21,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_user.c,v 1.1 2000/07/15 21:59:19 mysidia Exp $ */
+/* $Id: s_user.c,v 1.2 2000/07/16 08:17:00 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -547,13 +547,19 @@ register_user(aClient *cptr,
       /*
        * Check that the hostname has AT LEAST ONE dot (.) in it. If
        * not, drop the client (spoofed host) -ThemBones
+       *
+       *  localhost doesn't have any dots in it -- that's not spoofed.
+       *  There's no guarantee that a host on a local network has dots
+       *
+       *  -Mysid
        */
-      if (!dots) {
+
+      /*if (!dots) {
 			sendto_realops(
 								"Invalid hostname for %s, dumping user %s",
 								sptr->hostip, sptr->name);
 			return exit_client(cptr, sptr, &me, "Invalid hostname");
-      }
+      }*/
 		
       if (bad_dns) {
 			sendto_one(sptr, ":%s NOTICE %s :*** Notice -- You have a bad character in your hostname",

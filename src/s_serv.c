@@ -21,7 +21,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_serv.c,v 1.1 2000/07/15 21:59:07 mysidia Exp $ */
+/* $Id: s_serv.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -751,7 +751,11 @@ m_server_estab(aClient *cptr)
       if (bconf->passwd[0])
 	 sendto_one(cptr, "PASS %s :TS", bconf->passwd);
       /* Pass my info to the new server */
-      sendto_one(cptr, "CAPAB TS3 NOQUIT SSJOIN BURST UNCONNECT");
+      sendto_one(cptr, "CAPAB TS3 NOQUIT SSJOIN BURST UNCONNECT"
+#ifdef CAN_ENCRYPT
+                 " ENC1"
+#endif
+      );
       sendto_one(cptr, "SERVER %s 1 :%s",
 		 my_name_for_link(me.name, aconf),
 		 (me.info[0]) ? (me.info) : "IRCers United");

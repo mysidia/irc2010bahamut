@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: list.c,v 1.1 2000/07/15 21:58:27 mysidia Exp $ */
+/* $Id: list.c,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -45,8 +45,8 @@ extern int  BlockHeapGarbageCollect(BlockHeap *);
  * reasonable, for smaller nets who knows? -Dianora
  */
 
-#define LINK_PREALLOCATE 1024
-#define CHANMEMBER_PREALLOCATE 1024
+#define LINK_PREALLOCATE 128
+#define CHANMEMBER_PREALLOCATE 112
 /*
  * Number of aClient structures to preallocate at a time for Efnet 1024
  * is reasonable for smaller nets who knows? -Dianora
@@ -56,11 +56,11 @@ extern int  BlockHeapGarbageCollect(BlockHeap *);
  * times -Dianora
  */
 
-#define CLIENTS_PREALLOCATE 1024
+#define CLIENTS_PREALLOCATE 112
 
 /* Number of channels to allocate per block, 1024 sounds nice. */
 
-#define CHANNELS_PREALLOCATE 1024
+#define CHANNELS_PREALLOCATE 64
 
 void        outofmemory();
 
@@ -268,6 +268,8 @@ aClient    *make_client(aClient *from, aClient *uplink)
       cptr->status = STAT_UNKNOWN;
       cptr->fd = -1;
       cptr->uplink = uplink;
+      cptr->ssl_link = NULL;
+
       /* (void) strcpy(cptr->username, "unknown"); only in local structs now */
       return (cptr);
    }
@@ -284,6 +286,12 @@ free_client(aClient *cptr)
    else {
       retval = BlockHeapFree(free_remote_aClients, cptr);
    }
+
+   if (cptr->ssl_link) {
+       SSL_free(cptr->ssl_link);
+       cptr->ssl_link = NULL;
+   }
+
    if (retval) {
       /*
        * Looks "unprofessional" maybe, but I am going to leave this

@@ -18,7 +18,7 @@
  *
  */
 
-/* $Id: config.h,v 1.1 2000/07/15 21:59:29 mysidia Exp $ */
+/* $Id: config.h,v 1.2 2000/07/16 08:16:59 mysidia Exp $ */
 
 #ifndef	__config_include__
 #define	__config_include__
@@ -972,6 +972,12 @@ extern void debug(int level, char *pattern, ...);
 #else
 # define Debug(x) ;
 # define LOGFILE "/dev/null"
+#endif
+
+#if !defined(HAVE_LIBSSL) || !defined(HAVE_LIBCRYPTO)
+#undef CAN_ENCRYPT
+#else
+#define CAN_ENCRYPT
 #endif
 
 #define CONFIG_H_LEVEL_12

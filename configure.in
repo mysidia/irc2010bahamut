@@ -21,6 +21,8 @@ dnl Replace `main' with a function in -lnsl:
 AC_CHECK_LIB(nsl, gethostbyname)
 AC_CHECK_FUNC(res_mkquery,, AC_CHECK_LIB(resolv, res_mkquery))
 AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(crypto, ERR_load_crypto_strings)
+AC_CHECK_LIB(ssl, ssl2_enc_init)
 AC_CHECK_FUNC(crypt,, AC_CHECK_LIB(descrypt, crypt,,AC_CHECK_LIB(crypt, crypt,,)))
 
 dnl Checks for header files.
