@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: ircd.c,v 1.3 2000/07/22 21:52:03 mysidia Exp $ */
+/* $Id: ircd.c,v 1.4 2000/08/02 19:25:48 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -492,9 +492,9 @@ char 		*errtxt = "No response from %s, closing link";
 	       }
 #ifdef SHOW_HEADERS
 	       if (DoingDNS(cptr))
-	          send(cptr->fd, REPORT_FAIL_DNS, R_fail_dns, 0);
+	          ssl_send(cptr, REPORT_FAIL_DNS, R_fail_dns, 0);
 	       if (DoingAuth(cptr))
-	          send(cptr->fd, REPORT_FAIL_ID, R_fail_id, 0);
+	          ssl_send(cptr, REPORT_FAIL_ID, R_fail_id, 0);
 #endif
 	       Debug((DEBUG_NOTICE, "DNS/AUTH timeout %s",
 	 	      get_client_name(cptr, TRUE)));

@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_bsd.c,v 1.3 2000/07/22 21:52:03 mysidia Exp $ */
+/* $Id: s_bsd.c,v 1.4 2000/08/02 19:25:48 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -41,6 +41,7 @@
 #include <fcntl.h>
 #include <utmp.h>
 #include <sys/resource.h>
+#define CAN_ENCRYPT
 
 /* Stuff for poll() */
 
@@ -1184,7 +1185,6 @@ void set_non_blocking(int fd, aClient * cptr)
  */
 aClient *add_connection(aClient * cptr, int fd)
 {
-   extern SSL_CTX *my_ctx;
    Link lin;
    aClient *acptr;
    aConfItem *aconf = NULL;
@@ -1192,21 +1192,6 @@ aClient *add_connection(aClient * cptr, int fd)
    acptr = make_client(NULL, &me);
    if (cptr != &me)
       aconf = cptr->confs->value.aconf;
-
-   if (cptr && !isatty(fd)) {
-/*       acptr->ssl_link = SSL_new(my_ctx);
-       if (!acptr->ssl_link) {
-           ;;
-       }
-       else {
-           SSL_set_fd(acptr->ssl_link, fd);
-           SSL_want(acptr->ssl_link);
-       }
-
-       if ( acptr->ssl_link && SSL_accept(acptr->ssl_link) >= 0 )
-            SSL_do_handshake(acptr->ssl_link);
-*/
-   }
 
    /* 
     * Removed preliminary access check. Full check is performed in
@@ -1276,7 +1261,7 @@ aClient *add_connection(aClient * cptr, int fd)
 	 return NULL;
       }
 #ifdef SHOW_HEADERS
-      send(fd, REPORT_DO_DNS, R_do_dns, 0);
+      ssl_send(acptr, REPORT_DO_DNS, R_do_dns, 0);
 #endif
       lin.flags = ASYNC_CLIENT;
       lin.value.cptr = acptr;
@@ -1286,7 +1271,7 @@ aClient *add_connection(aClient * cptr, int fd)
 	 SetDNS(acptr);
 #ifdef SHOW_HEADERS
       else
-	 send(fd, REPORT_FIN_DNSC, R_fin_dnsc, 0);
+	 ssl_send(acptr, REPORT_FIN_DNSC, R_fin_dnsc, 0);
 #endif
       nextdnscheck = 1;
    }
@@ -1301,6 +1286,7 @@ aClient *add_connection(aClient * cptr, int fd)
    add_client_to_list(acptr);
    set_non_blocking(acptr->fd, acptr);
    set_sock_opts(acptr->fd, acptr);
+   sendto_one(acptr, ":%s SSL -", me.name);
 #ifdef DO_IDENTD
    start_auth(acptr);
 #endif
@@ -1381,12 +1367,23 @@ static int read_packet(aClient * cptr)
       errno = 0;
 
 #if defined(MAXBUFFERS)
-      if (IsPerson(cptr))
-	 length = recv(cptr->fd, readbuf, 8192 * sizeof(char), 0);
-      else
-	 length = recv(cptr->fd, readbuf, rcvbufmax * sizeof(char), 0);
+      if (IsPerson(cptr)) {
+         if (cptr->ssl_link)
+	     length = SSL_read(cptr->ssl_link, readbuf, 8192 * sizeof(char));
+	 else
+	     length = recv(cptr->fd, readbuf, 8192 * sizeof(char), 0);
+      }
+      else {
+         if (cptr->ssl_link)
+	     length = SSL_read(cptr->ssl_link, readbuf, rcvbufmax * sizeof(char));
+	 else
+	     length = recv(cptr->fd, readbuf, rcvbufmax * sizeof(char), 0);
+      }
 #else
-      length = recv(cptr->fd, readbuf, sizeof(readbuf), 0);
+      if (cptr->ssl_link)
+          length = SSL_read(cptr->fd, readbuf, sizeof(readbuf), 0);
+      else
+          length = recv(cptr->fd, readbuf, sizeof(readbuf), 0);
 #endif
 
 #ifdef USE_REJECT_HOLD
@@ -2406,7 +2403,7 @@ static void do_dns_async()
 	 if ((cptr = ln.value.cptr)) {
 	    del_queries((char *) cptr);
 #ifdef SHOW_HEADERS
-	    send(cptr->fd, REPORT_FIN_DNS, R_fin_dns, 0);
+	    ssl_send(cptr, REPORT_FIN_DNS, R_fin_dns, 0);
 #endif
 	    ClearDNS(cptr);
 	    cptr->hostp = hp;
@@ -2442,4 +2439,80 @@ static void do_dns_async()
       packets++;
    }
    while ((bytes > 0) && (packets < 10));
+}
+
+/* ARG4UNUSED */
+int ssl_send(aClient *cptr, char *msg, int len, int dummy)
+{
+   if (!cptr || cptr->fd == -1) {
+       errno = EBADF;
+       return -1;
+   }
+   if (cptr->ssl_link)
+       return SSL_write(cptr->ssl_link, msg, len);
+   else
+       return send(cptr->fd, msg, len, 0);
+}
+
+void do_ssl(aClient *cptr)
+{
+   extern SSL_CTX *my_ctx;
+
+   if (cptr->ssl_link)
+       return;
+
+   if (cptr) {
+       cptr->ssl_link = SSL_new(my_ctx);
+       if (!cptr->ssl_link) {
+           report_error("creating ssl link %s:%s", cptr);
+           ;;
+       }
+       else {
+           if ( SSL_set_fd(cptr->ssl_link, cptr->fd) < 0 )
+                report_error("SSL_set_fd: %s:%s", cptr);
+           //SSL_want(cptr->ssl_link);
+       }
+
+       if ( cptr->ssl_link && SSL_accept(cptr->ssl_link) >= 0 )
+            ; /*if ( SSL_do_handshake(cptr->ssl_link) < 0 )
+                report_error("SSL_handshake: %s:%s", cptr);*/
+       else {
+            report_error("SSL_accept: %s:%s", cptr);
+            SSL_free(cptr->ssl_link);
+            cptr->ssl_link = NULL;
+       }
+   }
+}
+
+int m_ssl(aClient *cptr, aClient *sptr, int parc, char *parv[])
+{
+#if defined(CAN_ENCRYPT)
+
+	/*
+	 * What the heck are we doing trying to negotiate for SSL with a
+	 * remote client ?
+	 *
+	 * -Mysid
+	 */
+	if (cptr != sptr)
+	    return 0;
+
+	/*
+	 * No protocol arguments means that the other side supports
+	 * SSL; if we support it, we reply
+	 */
+	if (parc < 3) {
+	    sendto_one(sptr, ":%s SSL - :A 1", me.name);
+            flush_connections(cptr->fd);
+
+	    do_ssl(sptr);
+	    return 0;
+	}
+	/*if (!mycmp(parv[2], "A 1"))
+	    send_to_one(sptr, ":%s SSL %s :B 1", me.name);*/
+
+        flush_connections(cptr->fd);
+	do_ssl(cptr);
+#endif
+	return 0;
 }

@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: bsd.c,v 1.1 2000/07/15 21:58:09 mysidia Exp $ */
+/* $Id: bsd.c,v 1.2 2000/08/02 19:25:48 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -86,7 +86,10 @@ int deliver_it(aClient *cptr, char *str, int len) {
 #ifdef	DEBUGMODE
    writecalls++;
 #endif
-   retval = send(cptr->fd, str, len, 0);
+   if (cptr->ssl_link)
+       retval = SSL_write(cptr->ssl_link, str, len);
+   else
+       retval = send(cptr->fd, str, len, 0);
    /*
     * Convert WOULDBLOCK to a return of "0 bytes moved". This 
     * should occur only if socket was non-blocking. Note, that all is

@@ -18,7 +18,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: channel.c,v 1.1 2000/07/15 21:58:16 mysidia Exp $ */
+/* $Id: channel.c,v 1.2 2000/08/02 19:25:48 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -1571,6 +1571,9 @@ m_join(aClient *cptr,
       }
 			
       chptr = get_channel(sptr, name, CREATE);
+
+      if (!chptr || IsMember(sptr, chptr))
+		  continue;
 		
       if (!chptr ||
 			 (MyConnect(sptr) && (i = can_join(sptr, chptr, key)))) {
@@ -1583,8 +1586,6 @@ m_join(aClient *cptr,
 #endif
 			continue;
       }
-      if (IsMember(sptr, chptr))
-		  continue;
 
 /* only complain when the user can join the channel, the channel is being created by this user,
    and this user is not allowed to be an op. - lucas */

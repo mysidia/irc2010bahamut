@@ -21,7 +21,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id: s_user.c,v 1.2 2000/07/16 08:17:00 mysidia Exp $ */
+/* $Id: s_user.c,v 1.3 2000/08/02 19:25:48 mysidia Exp $ */
 
 #include "struct.h"
 #include "common.h"
@@ -1089,9 +1089,12 @@ int m_nick(aClient *cptr, aClient *sptr, int parc, char *parv[])
        * Ok, we got the right number of params, but there isn't a
        * single dot in the hostname, which is suspicious. Don't fret
        * about it just kill it. - ThemBones
-       */
+       *
       sendto_realops("BAD HOSTNAME: %s[%s@%s] on %s (from %s)",
                      parv[0], parv[5], parv[6], parv[7], parv[0]);
+       *
+       * That's whacked						-Mysid
+       */
    }
         
    strncpyzt(nick, parv[1], NICKLEN + 1);
